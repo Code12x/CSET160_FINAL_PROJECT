@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+
+<body>
+    <form id="login_form" action="/login" method="post">
+        <input type="username" name="username" placeholder="Username"><br><br>
+        <input type="password" name="password" placeholder="Password"><br><br>
+        <input type="submit" value="Login">
+    </form>
+</body>
+
+<script>
+    let form = document.getElementById("login_form");
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        let req = new XMLHttpRequest();
+
+        req.open("POST", form.getAttribute("action"));
+
+        req.onreadystatechange = () => {
+            if (req.readyState === 4 && req.status === 200) {
+                let res = JSON.parse(req.responseText);
+
+                let access_token = res.token;
+
+                localStorage.setItem("access_token", access_token);
+
+                window.location.href = "http://localhost:5000/";
+            } else {
+                console.log("Error getting the access token: " + req.status);
+            }
+        }
+
+        req.send(new FormData(e.target));
+    });
+</script>
+
+</html>
