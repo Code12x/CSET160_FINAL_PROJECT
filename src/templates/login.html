@@ -27,13 +27,15 @@
             if (req.readyState === 4 && req.status === 200) {
                 let res = JSON.parse(req.responseText);
 
-                let access_token = res.token;
+                let access_token = res.access_token;
+                let refresh_token = res.refresh_token;
 
                 localStorage.setItem("access_token", access_token);
+                localStorage.setItem("refresh_token", refresh_token);
 
-                window.location.href = "http://localhost:5000/";
-            } else {
-                console.log("Error getting the access token: " + req.status);
+                window.location.href = "/";
+            } else if (req.readyState === 4 && req.status !== 200) {
+                console.log("Error getting the tokens: " + req.response);
             }
         }
 
