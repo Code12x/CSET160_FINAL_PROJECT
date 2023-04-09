@@ -31,9 +31,13 @@
                 let refresh_token = res.refresh_token;
 
                 localStorage.setItem("access_token", access_token);
-                localStorage.setItem("refresh_token", refresh_token);
 
-                window.location.href = "/";
+                let url = new URL(window.location.href);
+                if (url.searchParams.get("next")) {
+                    window.location.assign(url.searchParams.get("next"));
+                } else {
+                    window.location.href = "/";
+                }
             } else if (req.readyState === 4 && req.status !== 200) {
                 console.log("Error getting the tokens: " + req.response);
             }

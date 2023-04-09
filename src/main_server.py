@@ -24,7 +24,7 @@ app.config['SECRET_KEY'] = env("SECRET_KEY")
 connection = pymysql.connect(host=MYSQL_HOST, port=MYSQL_PORT,
                              user=MYSQL_USERNAME, password=MYSQL_PASSWORD, database=MYSQL_DATABASE)
 
-tokens = []
+refresh_tokens = []
 
 # def access_token_required(func):
 #     @wraps(func)
@@ -35,44 +35,15 @@ tokens = []
 #     return decorated
 
 
-def validate_token(token, refresh=False):
+def validate_token(token):
     try:
         payload = jwt.decode(token, app.config['SECRET_KEY'],
                              algorithms=["HS256"], verify_signature=True)
         return {"status": "success", "payload": payload}
-    except jwt.exceptions.InvalidTokenError:
-        return {"status": "invalid"}
+    except jwt.exceptions.InvalidTokenError as e:
+        return {"status": "invalid", "error": e}
     except:
-        return {"status": "error"}
-
-
-def try_set_user(refresh=False):
-    if refresh:
-        token = request.cookies.get("refresh_token")
-    else:
-        token = request.args.get("token")
-
-    if not token:
-        return {"status": "missing"}
-    else:
-        token_status = validate_token()
-
-        if token_status.status == "success":
-            request.user = token_status.payload.user
-            return {"status": "success"}
-
-        elif token_status.status == "invalid":
-            if not refresh:
-                try_set_user(refresh=True)
-
-            return {"status": "invalid"}
-
-        if payload:
-            request.user = payload.user
-
-         if not refresh:
-            try:
-                if try_set_token(refresh=True).get("status") == "valid":
+        return {"status": "error", "error": e}
 
 
 def generate_token(user, refresh=False):
@@ -83,6 +54,8 @@ def generate_token(user, refresh=False):
         payload['exp'] = datetime.utcnow() + 60*10
 
     token = jwt.encode(payload, app.config['SECRET_KEY'])
+    if refresh:
+        refresh_tokens.append(token)
     return token
 
 
@@ -101,7 +74,6 @@ def login():
             })
             res.set_cookie("refresh_token", refresh_token)
             return res
-
         else:
             return make_response('Unable to verify', 403,
                                  {'WWW-Authenticate': 'Basic realm: "Authentication Failed!"'})
@@ -109,23 +81,29 @@ def login():
         return render_template("login.html")
 
 
-@ app.route('/logout', methods=["DELETE"])
+@app.route('/logout', methods=["DELETE"])
 def logout():
-    refresh_token = request.headers.get("refresh_token")
+    refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
-        return make_response({"logout_status": "missing_token"})
+        return make_response({"status": "error", "error": "missing token"})
     else:
-        if try_set_token(refresh=True):
-            return make_response({"logout_status": "success"})
+        if refresh_token in refresh_tokens:
+            refresh_tokens.remove(refresh_token)
+            return make_response({"status": "success"})
         else:
-            return make_response({"logout_status": "invalid"})
+            return make_response({"status": "error", "error": "invalid"})
 
 
 @app.route("/token", methods=["POST"])
 def token():
-    refresh_token_status = try_set_token()
-    if refresh_token_status.get("status") == "valid":
-        return make_response({"access_token": generate_token(request.user)})
+    refresh_token = request.cookies.get("refresh_token")
+
+    if refresh_token in refresh_tokens:
+        token_status = validate_token(refresh_token)
+        if token_status.status == "success":
+            return make_response({"access_token": generate_token(token_status.payload.user)})
+        else:
+            return app.redirect("/login")
     else:
         return app.redirect("/login")
 
@@ -143,8 +121,13 @@ def register():
 
 @app.route("/cool")
 def cool():
-    if has_access_token():
-        return render_template("cool.html", name=request.user)
+    access_token = request.args.get("token")
+    if access_token:
+        token_status = validate_token(access_token)
+        if token_status.get("status") == "success":
+            return render_template("cool.html", name=token_status.get("payload").get("user"))
+        else:
+            return make_response(token_status)
     else:
         return redirect("/login")
 

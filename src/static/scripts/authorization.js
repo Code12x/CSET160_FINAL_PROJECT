@@ -1,3 +1,17 @@
+async function test_path_for_auth(url) {
+    const response = await fetch(url);
+    if (response.status === "error") {
+        if (response.error === "invalid") {
+            renew_access_token();
+            test_path_for_auth(url);
+        } else {
+            location.assign("/login?next=" + url);
+        }
+    } else {
+        window.location.assign(url);
+    }
+}
+
 links_to_add_access_token = document.getElementsByClassName("add_access_token_to_href");
 for (i = 0; i < links_to_add_access_token.length; i++) {
     link = links_to_add_access_token[i];
@@ -7,7 +21,7 @@ for (i = 0; i < links_to_add_access_token.length; i++) {
         let url = new URL(link.getAttribute("href"));
         url.searchParams.append("token", localStorage.getItem("access_token"));
 
-        location.assign(url.toString());
+        test_path_for_auth(url);
     })
 }
 
@@ -40,8 +54,6 @@ function renew_access_token() {
     req = new XMLHttpRequest();
 
     req.open("POST", "/token");
-
-    req.setRequestHeader("refresh_token", localStorage.getItem("refresh_token"));
 
     req.onload = () => {
         res = JSON.parse(req.responseText);
