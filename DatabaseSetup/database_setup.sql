@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `Users` (
   `username` VARCHAR(25) NOT NULL UNIQUE,
   `email` VARCHAR(50) NOT NULL UNIQUE,
   `password` VARCHAR(40) NOT NULL,
-  `date_created` DATETIME DEFAULT NOW()
+  `date_created` DATETIME NOT NULL4 DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS `Teachers` (
@@ -62,3 +62,6 @@ CREATE TABLE IF NOT EXISTS `TestAttemptQuestions` (
   FOREIGN KEY(test_attempt_id) REFERENCES TestAttempts(test_attempt_id),
   FOREIGN KEY(question_id) REFERENCES TestQuestions(test_question_id)
 );
+
+SHOW TABLES;
+DESC TestAttemptQuestions;
