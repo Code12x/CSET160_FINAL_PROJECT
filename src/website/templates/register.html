@@ -28,8 +28,8 @@
 {% extends "header.html" %}
 {% block title %} | Register{% endblock %}
 {% block body %}
+<h2 class="sign-up-message">Register</h2>
 <form method="POST">
-    <h2 class="sign-up-message">Register</h2>
     <br><br>
     <div class="form-group">
         <div>
@@ -47,7 +47,14 @@
             <input type="password" placeholder="Password" name="password" id="passwrod">
         </div>
         <br>
+        <div>
+            <label for="teacher">Teacher account?</label>
+            <input type="checkbox" name="teacher" id="teacher">
+        </div>
+        <br>
         <input type="submit" value="Register" class="register-btn">
+        <br><br>
+        <p>Already have an account? <a href="/login">Login</a></p>
     </div>
 </form>
 {% endblock %}

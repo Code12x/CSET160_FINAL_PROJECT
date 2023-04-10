@@ -1,4 +1,21 @@
+<style>
+    .user {
+        display: inline-block;
+        margin: 5px;
+        padding: 10px;
+        background-color: gray;
+        border-radius: 15px;
+    }
+</style>
+
 {% extends "header.html" %}
+{% block title %}
+| Users
+{% endblock %}
 {% block body %}
-<h1>Welcom to users.html!</h1>
+{% for user in users %}
+<div class="user">
+    <h2>Username: {{ user.username }}</h2>
+</div>
+{% endfor %}
 {% endblock %}

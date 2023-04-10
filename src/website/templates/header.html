@@ -7,10 +7,22 @@
     <div class="logo-and-links">
         <nav class="flex-between">
             <a href="/"><img class="logo" src="{{ url_for('static', filename='images/ultimate_tests.png') }}"></a>
+            {% if current_user.is_authenticated %}
             <a href="/users" class="nav-a">Users</a>
             <a href="/tests" class="nav-a">Tests</a>
+            {% if current_user.is_teacher %}
+            <a href="/create/test" class="nav-a">Create Test</a>
+            {% endif %}
+            {% endif %}
         </nav>
     </div>
-    <a href="/login" class="nav-a">Login</a>
+    {% if current_user.is_authenticated %}
+    <div class="flex-between">
+        <h3 style="align-self: center;">Hello, {{ current_user.username }}</h3>
+        <a href="/logout" class="nav-a">Logout</a>
+    </div>
+    {% else %}
+    <a href="/login" class="nav-a">Login {{ current_user.username }}</a>
+    {% endif %}
 </header>
 {% endblock %}

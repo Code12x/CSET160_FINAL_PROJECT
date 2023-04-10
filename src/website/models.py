@@ -3,65 +3,91 @@ from sqlalchemy.sql import func
 from flask_login import UserMixin
 
 
-class User(db.Model, UserMixin):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(25), nullable=False, unique=True)
-    email = db.Column(db.String(50), nullable=False, unique=True)
+class Users(db.Model, UserMixin):
+    __tablename__ = 'Users'
+    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(25), unique=True, nullable=False)
+    email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(40), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
 
+    @property
+    def is_teacher(self):
+        teacher = Teachers.query.filter_by(user_id=self.user_id).first()
+        if teacher:
+            return True
+        else:
+            return False
 
-class Teacher(db.Model):
-    __tablename__ = 'teachers'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+class Teachers(db.Model, UserMixin):
+    __tablename__ = 'Teachers'
+    teacher_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey(
-        'users.id'), nullable=False)
+        'Users.user_id'), nullable=False)
+    user = db.relationship('Users', backref='teachers')
+
+    @property
+    def id(self):
+        return self.user.user_id
 
 
-class Student(db.Model):
-    __tablename__ = 'students'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+class Students(db.Model, UserMixin):
+    __tablename__ = 'Students'
+    student_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey(
-        'users.id'), nullable=False)
+        'Users.user_id'), nullable=False)
+    user = db.relationship('Users', backref='students')
+
+    @property
+    def id(self):
+        return self.user.user_id
 
 
-class Test(db.Model):
-    __tablename__ = 'tests'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+class Tests(db.Model):
+    __tablename__ = 'Tests'
+    test_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     teacher_id = db.Column(db.Integer, db.ForeignKey(
-        'teachers.id'), nullable=False)
+        'Teachers.teacher_id'), nullable=False)
     test_name = db.Column(db.String(40), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
     date_edited = db.Column(db.DateTime, nullable=False, default=func.now())
+    teacher = db.relationship('Teachers', backref='tests')
 
 
-class TestQuestion(db.Model):
-    __tablename__ = 'test_questions'
-    id = db.Column(
+class TestQuestions(db.Model):
+    __tablename__ = 'TestQuestions'
+    test_question_id = db.Column(
         db.Integer, primary_key=True, autoincrement=True)
     test_id = db.Column(db.Integer, db.ForeignKey(
-        'tests.id'), nullable=False)
+        'Tests.test_id'), nullable=False)
     question = db.Column(db.String(255), nullable=False)
     answer = db.Column(db.String(255), nullable=False)
+    test = db.relationship('Tests', backref='test_questions')
 
 
-class TestAttempt(db.Model):
-    __tablename__ = 'test_attempts'
-    id = db.Column(
+class TestAttempts(db.Model):
+    __tablename__ = 'TestAttempts'
+    test_attempt_id = db.Column(
         db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey(
-        'students.id'), nullable=False)
+        'Students.student_id'), nullable=False)
     test_id = db.Column(db.Integer, db.ForeignKey(
-        'tests.id'), nullable=False)
+        'Tests.test_id'), nullable=False)
+    student = db.relationship('Students', backref='test_attempts')
+    test = db.relationship('Tests', backref='test_attempts')
 
 
-class TestAttemptQuestion(db.Model):
-    __tablename__ = 'test_attempt_questions'
-    id = db.Column(
+class TestAttemptQuestions(db.Model):
+    __tablename__ = 'TestAttemptQuestions'
+    test_attempt_question_id = db.Column(
         db.Integer, primary_key=True, autoincrement=True)
     test_attempt_id = db.Column(db.Integer, db.ForeignKey(
-        'test_attempts.id'), nullable=False)
+        'TestAttempts.test_attempt_id'), nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey(
-        'test_questions.id'), nullable=False)
+        'TestQuestions.test_question_id'), nullable=False)
     attempted_answer = db.Column(db.String(255), nullable=False)
+    test_attempt = db.relationship(
+        'TestAttempts', backref='test_attempt_questions')
+    test_question = db.relationship(
+        'TestQuestions', backref='test_attempt_questions')

@@ -8,6 +8,10 @@
     padding-top: 20px;
 }
 
+.flash-message {
+    text-align: center;
+}
+
 header {
     background-color: gray;
     display: flex;
