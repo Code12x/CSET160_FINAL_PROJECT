@@ -1,0 +1,53 @@
+<style>
+    .sign-up-message {
+        text-align: center;
+    }
+
+    form {
+        width: 100%;
+    }
+
+    .form-group {
+        width: fit-content;
+        margin: 0 auto;
+    }
+
+    .register-btn {
+        border: none;
+        padding: 5px;
+        background-color: lightgray;
+        border-radius: 5px;
+    }
+
+    .register-btn:hover {
+        background-color: darkgray;
+    }
+</style>
+
+
+{% extends "header.html" %}
+{% block title %} | Register{% endblock %}
+{% block body %}
+<form method="POST">
+    <h2 class="sign-up-message">Register</h2>
+    <br><br>
+    <div class="form-group">
+        <div>
+            <label for="username">Username:</label>
+            <input type="username" placeholder="Username" name="username" id="username">
+        </div>
+        <br>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" placeholder="Email" name="email" id="email">
+        </div>
+        <br>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" placeholder="Password" name="password" id="passwrod">
+        </div>
+        <br>
+        <input type="submit" value="Register" class="register-btn">
+    </div>
+</form>
+{% endblock %}

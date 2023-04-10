@@ -1,0 +1,16 @@
+<style>
+</style>
+
+{% extends "base.html" %}
+{% block header %}
+<header class="flex-between">
+    <div class="logo-and-links">
+        <nav class="flex-between">
+            <a href="/"><img class="logo" src="{{ url_for('static', filename='images/ultimate_tests.png') }}"></a>
+            <a href="/users" class="nav-a">Users</a>
+            <a href="/tests" class="nav-a">Tests</a>
+        </nav>
+    </div>
+    <a href="/login" class="nav-a">Login</a>
+</header>
+{% endblock %}

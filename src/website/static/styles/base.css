@@ -1,0 +1,55 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.content {
+    padding-top: 20px;
+}
+
+header {
+    background-color: gray;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: white;
+    font-size: 20pt;
+}
+
+.nav-a:hover {
+    text-shadow: 0 0 5px black;
+}
+
+.logo {
+    height: 80px;
+    width: 80px;
+}
+
+.login-form-div {
+    display: flex;
+    align-items: center;
+}
+
+#login-form input {
+    height: 30px;
+}
+
+body {
+    min-height: 100%;
+}
