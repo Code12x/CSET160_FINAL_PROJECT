@@ -13,10 +13,30 @@
     <form id="logout_form">
         <input type="submit" value="Logout">
     </form>
+
 </body>
 <script src="/static/scripts/authorization.js"></script>
 <script>
+    let logout_form = document.getElementById("logout_form");
+    logout_form.addEventListener('submit', e => {
+        e.preventDefault();
 
+        localStorage.removeItem("access_token");
+
+        let req = new XMLHttpRequest();
+
+        req.open("DELETE", "/logout");
+
+        req.setRequestHeader("refresh_token", localStorage.getItem("refresh_token"));
+
+        req.onload = () => {
+            res = JSON.parse(req.responseText);
+            if (res.status === "success") {
+                location.assign("/");
+            }
+        };
+        req.send();
+    });
 </script>
 
 </html>

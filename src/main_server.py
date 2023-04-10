@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from functools import wraps
+import sys
 import jwt
 import pymysql
 from environs import Env
@@ -26,24 +27,16 @@ connection = pymysql.connect(host=MYSQL_HOST, port=MYSQL_PORT,
 
 refresh_tokens = []
 
-# def access_token_required(func):
-#     @wraps(func)
-#     def decorated(*args, **kwargs):
-#         if not has_access_token():
-#             app.redirect("/login")
-#         return func(*args, **kwargs)
-#     return decorated
-
 
 def validate_token(token):
     try:
         payload = jwt.decode(token, app.config['SECRET_KEY'],
-                             algorithms=["HS256"], verify_signature=True)
+                             algorithms=["HS256"], verify_exp=True)
         return {"status": "success", "payload": payload}
-    except jwt.exceptions.InvalidTokenError as e:
-        return {"status": "invalid", "error": e}
-    except:
-        return {"status": "error", "error": e}
+    except jwt.exceptions.InvalidTokenError:
+        return {"status": "invalid", "error": "invalid token"}
+    except Exception as e:
+        return {"status": "error", "error": "error validating token"}
 
 
 def generate_token(user, refresh=False):
@@ -51,7 +44,7 @@ def generate_token(user, refresh=False):
     if refresh:
         payload['salt'] = urandom(16).hex()
     else:
-        payload['exp'] = datetime.utcnow() + 60*10
+        payload['exp'] = datetime.utcnow() + timedelta(hours=1)
 
     token = jwt.encode(payload, app.config['SECRET_KEY'])
     if refresh:
@@ -100,26 +93,26 @@ def token():
 
     if refresh_token in refresh_tokens:
         token_status = validate_token(refresh_token)
-        if token_status.status == "success":
-            return make_response({"access_token": generate_token(token_status.payload.user)})
+        if token_status.get("status") == "success":
+            return make_response({"status": "success", "access_token": generate_token(token_status.get("payload").get("user"))})
         else:
-            return app.redirect("/login")
+            return make_response({"status": "error", "error": "invalid"})
     else:
-        return app.redirect("/login")
+        return make_response({"status": "error", "error": "invalid"})
 
 
-@app.route("/")
+@ app.route("/")
 def index():
     return render_template("index.html")
 
 
-@app.route("/register", methods=["GET", "POST"])
+@ app.route("/register", methods=["GET", "POST"])
 def register():
     # return render_template("register.html")
     pass
 
 
-@app.route("/cool")
+@ app.route("/cool")
 def cool():
     access_token = request.args.get("token")
     if access_token:
@@ -129,29 +122,29 @@ def cool():
         else:
             return make_response(token_status)
     else:
-        return redirect("/login")
+        return make_response({"status": "error", "error": "missing access token"})
 
 
-@app.route("/users")
+@ app.route("/users")
 # @access_token_required
 def users():
     # use request.args.get('filter')
     pass
 
 
-@app.route("/tests")
+@ app.route("/tests")
 # @access_token_required
 def tests():
     pass
 
 
-@app.route("/test/take/<int:test_id>", methods=["GET", "POST"])
+@ app.route("/test/take/<int:test_id>", methods=["GET", "POST"])
 # @access_token_required
 def test_take_get(test_id):
     pass
 
 
-@app.route("/test/create/<int:test_id>", methods=["GET", "POST", "UPDATE"])
+@ app.route("/test/create/<int:test_id>", methods=["GET", "POST", "UPDATE"])
 # @access_token_required
 def test_create_get(test_id):
     pass
