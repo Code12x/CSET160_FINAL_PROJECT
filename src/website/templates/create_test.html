@@ -1,6 +1,7 @@
 <style>
     .form-group {
-        display: inline-block;
+        display: block;
+        width: fit-content;
         margin: 0 auto;
     }
 </style>
@@ -15,20 +16,34 @@
         <div>
             <label for="name">Name of test:</label>
             <input type="text" name="name" id="name" maxlength="40">
+
         </div>
+        <br>
         <div>
             <label for="q1">Question 1:</label>
             <input name="q1" id="q1" type="text" maxlength="255">
+        </div>
+        <div>
+            <label for="a1">Answer 1:</label>
+            <input type="text" name="a1" id="a1" maxlength="255">
         </div>
         <br>
         <div>
             <label for="q2">Question 2:</label>
             <input name="q2" id="q2" type="text" maxlength="255">
         </div>
+        <div>
+            <label for="a2">Answer 2:</label>
+            <input type="text" name="a2" id="a2" maxlength="255">
+        </div>
         <br>
         <div>
             <label for="q3">Question 3:</label>
             <input name="q3" id="q3" type="text" maxlength="255">
+        </div>
+        <div>
+            <label for="a1">Answer 3:</label>
+            <input type="text" name="a3" id="a3" maxlength="255">
         </div>
         <br>
         <input type="submit" value="Create Test">

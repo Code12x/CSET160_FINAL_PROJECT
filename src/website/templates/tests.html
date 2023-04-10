@@ -1,4 +1,32 @@
+<style>
+    .test {
+        padding: 10px;
+        margin: 5px;
+        background-color: gray;
+    }
+
+    .test-a {
+        text-decoration: none;
+        color: black;
+        font-size: 20pt;
+    }
+</style>
+
 {% extends "header.html" %}
+{% block title %}
+| Tests
+{% endblock %}
 {% block body %}
-<h1>Welcom to tests.html!</h1>
+{% if current_user.is_teacher %}
+
+
+{% else %}
+{% for test in tests %}
+<div class="test">
+    <a class="test-a" href="/take/test/{{ test.test_id }}">{{ test.test_name }}</a>
+</div>
+{% endfor %}
+
+{% endif %}
+
 {% endblock %}
