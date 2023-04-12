@@ -1,0 +1,27 @@
+<style>
+    .form-group {
+        width: fit-content;
+        margin: 0 auto;
+    }
+</style>
+
+{% extends "header.html" %}
+{% block title %} | {{ test.test_name }} {% endblock %}
+{% block body %}
+<div class="form-group">
+    <h1>{{ test.test_name }}</h1>
+    <hr>
+    <br>
+    <form action="/take/test/{{ test.test_id }}" method="POST">
+        {% for question in questions %}
+        {% with i = questions.index(question)+1 %}
+        <label for="q{{ i }}">{{ question.question }}: </label>
+        <input type="text" name="q{{ i }}">
+        {% endwith %}
+        <br>
+        <br>
+        {% endfor %}
+        <input type="submit" value="Submit">
+    </form>
+</div>
+{% endblock %}

@@ -1,10 +1,10 @@
 <style>
     .user {
-        display: inline-block;
+        width: fit-content;
         margin: 5px;
         padding: 10px;
         background-color: gray;
-        border-radius: 15px;
+        border-radius: 5px;
     }
 </style>
 
@@ -13,9 +13,16 @@
 | Users
 {% endblock %}
 {% block body %}
-{% for user in users %}
-<div class="user">
-    <h2>Username: {{ user.username }}</h2>
+<div style="margin-left:5px;">
+    <p>Filter: <a href="/users">All</a> <a href="/users/teachers">Teachers</a> <a href="/users/students">Student</a></p>
 </div>
+<br>
+{% for user in users %}
+{% with status = 'Teacher' if user.is_teacher else 'Student' %}
+<div class="user {{ status }}">
+    <h2>{{ user.username }}</h2>
+    <h3>Status: {{ status }}</h3>
+</div>
+{% endwith %}
 {% endfor %}
 {% endblock %}

@@ -1,14 +1,20 @@
 <style>
     .test {
+        display: block;
         padding: 10px;
         margin: 5px;
         background-color: gray;
-    }
-
-    .test-a {
+        width: fit-content;
+        border-radius: 5px;
         text-decoration: none;
         color: black;
-        font-size: 20pt;
+    }
+
+    .center {
+        display: block;
+        width: fit-content;
+        margin: 0 auto;
+        text-decoration: none;
     }
 </style>
 
@@ -17,16 +23,25 @@
 | Tests
 {% endblock %}
 {% block body %}
+{% if tests|length == 0 %}
 {% if current_user.is_teacher %}
-
-
+<p class="center">You don't have any tests. <a href="/create/test">Create one!</a></p>
+{% else %}
+<p class="center">There are no available tests!</p>
+{% endif %}
 {% else %}
 {% for test in tests %}
-<div class="test">
-    <a class="test-a" href="/take/test/{{ test.test_id }}">{{ test.test_name }}</a>
-</div>
+{% if current_user.is_teacher %}
+<a class="test" href="/update/test/{{ test.test_id }}">
+    <h2>{{ test.test_name }}</h2>
+</a>
+{% else %}
+<a class="test" href="/take/test/{{ test.test_id }}">
+    <h2>{{ test.test_name }}</h2>
+    <h4>By: {{ test.teacher.user.username }}</h4>
+</a>
+{% endif %}
 {% endfor %}
-
 {% endif %}
 
 {% endblock %}

@@ -22,7 +22,10 @@
         <a href="/logout" class="nav-a">Logout</a>
     </div>
     {% else %}
-    <a href="/login" class="nav-a">Login {{ current_user.username }}</a>
+    <div>
+        <a href="/login" class="nav-a">Login</a>
+        <a href="/register" class="nav-a">Register</a>
+    </div>
     {% endif %}
 </header>
 {% endblock %}

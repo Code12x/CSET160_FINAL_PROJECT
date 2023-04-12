@@ -1,4 +1,39 @@
+<style>
+    .main {
+        width: 75%;
+        padding: 15px;
+        margin: 0 auto;
+        background-color: lightgray;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .ut {
+        font-size: 30pt;
+        border-bottom: 2px solid black;
+    }
+
+    .support {
+        padding-top: 20px;
+    }
+
+    .big-logo {
+        display: block;
+        margin: 0 auto;
+        height: 400px;
+        width: 400px;
+    }
+</style>
+
+
 {% extends "header.html" %}
 {% block body %}
-<h1>Welcom to index.html!</h1>
+<div class="main">
+    <h1 class="ut">Ultimate Tests!</h1>
+    <div class="support">
+        <p>The next-gen test-taking site!</p>
+        <p>Create a student account to get started taking tests! OR create a teacher account to create tests!</p>
+    </div>
+</div>
+<img class="big-logo" src="{{ url_for('static', filename='images/ultimate_tests.png') }}">
 {% endblock %}
